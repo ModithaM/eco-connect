@@ -1,0 +1,34 @@
+name: Deploy Supabase Edge Functions
+
+on:
+  workflow_dispatch:
+    inputs:
+      supabase_project_ref:
+        description: 'Supabase project reference'
+        required: true
+        default: ${{ secrets.SUPABASE_PROJECT_REF }}
+      supabase_access_token:
+        description: 'Supabase access token'
+        required: true
+        default: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+jobs:
+  deploy-functions:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+
+      - name: Deploy all functions
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ github.event.inputs.supabase_access_token }}
+          SUPABASE_PROJECT_REF: ${{ github.event.inputs.supabase_project_ref }}
+        run: |
+          cd supabase
+          supabase functions deploy --project-ref "$SUPABASE_PROJECT_REF" --all
