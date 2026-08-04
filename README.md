@@ -1,58 +1,53 @@
-# HandyConnect
+# Eco Connect
 
-HandyConnect — a web platform connecting homeowners with verified local service providers (plumbers, electricians, cleaners, painters, etc.) for booking home repair and maintenance services.
+Eco Connect is a React Native app built with Expo for mobile-first community and service workflows.
 
 ## Tech Stack
 
-- **Frontend:** Next.js (App Router), TypeScript, Tailwind CSS
+- **App:** Expo SDK 57, React Native, Expo Router, TypeScript
 - **Backend:** Supabase (Postgres, Auth, Edge Functions)
-
-## Core Features / Epics
-
-- User authentication and profile management
-- Service provider listing and search
-- Booking and scheduling workflows
-- Reviews and ratings
-- User and provider notifications
 
 ## Project Structure
 
-- `frontend/` — Next.js application (UI, routing, client/server integration)
+- `app/` — Expo React Native application
 - `supabase/` — Supabase local project config, database artifacts, and Edge Functions
-
-This separation keeps frontend deployment (e.g., Vercel) independent from Supabase backend deployment.
 
 ## Local Development Setup
 
-1. Install frontend dependencies:
+1. Install app dependencies:
    ```bash
-   cd frontend
-   npm ci
+   cd app
+   pnpm install
    ```
-2. Create local frontend env file:
+2. Start the Expo dev server:
    ```bash
-   cp .env.local.example .env.local
+   cd app
+   pnpm start
    ```
-3. Start Supabase local stack (from repo root):
+3. Run on a platform:
+   ```bash
+   cd app
+   pnpm android
+   # or
+   pnpm ios
+   # or
+   pnpm web
+   ```
+4. Start Supabase local stack (from repo root):
    ```bash
    npx supabase start
    ```
-4. Serve Edge Functions locally (from repo root):
+5. Serve Edge Functions locally (from repo root):
    ```bash
    npx supabase functions serve
-   ```
-5. Start Next.js dev server:
-   ```bash
-   cd frontend
-   npm run dev
    ```
 
 ## Environment Variables
 
 | Variable | Where used | Description |
 |---|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | Frontend | Supabase project URL used by client/server Supabase SDKs. |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Frontend | Public anonymous API key for Supabase client access. |
+| `EXPO_PUBLIC_SUPABASE_URL` | App | Supabase project URL used by the Expo app. |
+| `EXPO_PUBLIC_SUPABASE_ANON_KEY` | App | Public anonymous API key for Supabase client access. |
 | `SUPABASE_ACCESS_TOKEN` | GitHub Actions / Deploy | Personal access token used to deploy Edge Functions from CI. |
 | `SUPABASE_PROJECT_REF` | GitHub Actions / Deploy | Supabase project reference used by deploy workflow target project. |
 | `EDGE_FUNCTION_*` (example naming) | Supabase Edge Functions | Function-specific secrets (API keys/tokens) set via `supabase secrets set`, never committed. |
@@ -60,9 +55,9 @@ This separation keeps frontend deployment (e.g., Vercel) independent from Supaba
 ## CI/CD
 
 - `ci.yml` runs on every push and pull request to `main` and performs:
-  - frontend dependency install (`npm ci`)
-  - lint (`npm run lint`)
-  - build (`npm run build`)
+  - app dependency install (`pnpm install --frozen-lockfile`)
+  - lint (`pnpm lint`)
+  - type check (`pnpm exec tsc --noEmit`)
 - `deploy-functions.yml` deploys Supabase Edge Functions to Supabase on push to `main`.
 
 ## Contributing
